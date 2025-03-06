@@ -282,7 +282,7 @@ def EF_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
 
     return drop_edge_left,drop_edge_right
 
-def EF_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 10):
+def EF_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 15):
     """finds tangent line of the drop and the angle it forms with the baseline
 
     Parameters
