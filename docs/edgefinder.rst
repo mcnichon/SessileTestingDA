@@ -1,3 +1,1 @@
-Functions
-============
 .. automodule:: edgefinder.edgefinder
