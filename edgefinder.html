@@ -32,7 +32,136 @@
 
           <div class="body" role="main">
             
-  
+  <dl class="py function" id="module-edgefinder.edgefinder">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_angle_tan">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_angle_tan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline_coe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_angle_tan" title="Link to this definition">¶</a></dt>
+<dd><p>finds tangent line of the drop and the angle it forms with the baseline</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values.</p></li>
+<li><p><strong>edge_left</strong> (<em>np.array</em>) – array of droplet edge xy locations left of “midpoint”</p></li>
+<li><p><strong>edge_right</strong> (<em>np.array</em>) – array of droplet edge xy locations right of “midpoint”</p></li>
+<li><p><strong>baseline_coe</strong> (<em>np.array</em>) – array of coefficients of baseline</p></li>
+<li><p><strong>tan_ignore</strong> (<em>Integer</em>) – number of points to ignore when fitting tan line</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>drop_edge_left</strong> (<em>np.array</em>) – array of droplet edge xy locations left of “midpoint”</p></li>
+<li><p><strong>drop_edge_right</strong> (<em>np.array</em>) – array of droplet edge xy locations right of “midpoint”</p></li>
+<li><p><strong>intersection_left</strong> (<em>np.array</em>) – xy location of intersection between tanget line and baseline right (3 phase point)</p></li>
+<li><p><strong>intersection_right</strong> (<em>np.array</em>) – xy location of intersection between tanget line and baseline right (3 phase point)</p></li>
+<li><p><strong>angle</strong> (<em>np.array</em>) – left and right drop contact angle</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_baseline">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_light</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">72</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_baseline" title="Link to this definition">¶</a></dt>
+<dd><p>Finds the baseline of stage</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values from image.</p></li>
+<li><p><strong>bl_fit</strong> (<em>Integer</em>) – number of pixels used on the left and right side of image to linearly fit the baseline</p></li>
+<li><p><strong>bl_ignore</strong> (<em>Integer</em>) – number of pixels to offset on the left and right edge of the illuminated region when linearly fitting baseline</p></li>
+<li><p><strong>threshold_light</strong> (<em>Integer</em>) – light intensity threshold for edge of illuminated region (1-255)</p></li>
+<li><p><strong>threshold_dark</strong> (<em>Integer</em>) – light intensity threshold for edge of baseplate (1-255)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>baseline_pts</strong> (<em>np.array</em>) – array of baseline xy locations</p></li>
+<li><p><strong>baseline_coe</strong> (<em>np.array</em>) – array of coefficients for linear baseline equation</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_crop">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_crop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_light</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_crop" title="Link to this definition">¶</a></dt>
+<dd><p>Crops given image based on upon  light intensity threshold and a pixel offset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values from image to be cropped.</p></li>
+<li><p><strong>offset</strong> (<em>Integer</em>) – Crop offset in the conservative direction, resulting in larger image</p></li>
+<li><p><strong>threshold_light</strong> (<em>Integer</em>) – light intensity threshold for edge of illuminated region (1-255)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>crop_image</strong> – cropped image based upon threshold and offset</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_drop_edge">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_drop_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">72</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_drop_edge" title="Link to this definition">¶</a></dt>
+<dd><p>Finds the edge of the drop</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values from image.</p></li>
+<li><p><strong>baseline</strong> (<em>np.array</em>) – array of baseline xy locations calculated in “baseline”</p></li>
+<li><p><strong>bl_offset</strong> (<em>Integer</em>) – number of pixels to offset above baseline when starting to find edge, should be greater than 1</p></li>
+<li><p><strong>threshold_dark</strong> (<em>Integer</em>) – light intensity threshold for edge of baseplate/droplet (1-255)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>drop_edge_left</strong> (<em>np.array</em>) – array of droplet edge xy locations left of “midpoint”</p></li>
+<li><p><strong>drop_edge_right</strong> (<em>np.array</em>) – array of droplet edge xy locations right of “midpoint”</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_full_analysis">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_full_analysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_light</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">72</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_full_analysis" title="Link to this definition">¶</a></dt>
+<dd><p>finds tangent line of the drop and the angle it forms with the baseline</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values.</p></li>
+<li><p><strong>functions</strong> (<em>Others are defined in previous</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="edgefinder.edgefinder.ef_subpixel">
+<span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_subpixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_subpixel" title="Link to this definition">¶</a></dt>
+<dd><p>Creates additional subpixels in the image using linear interpolation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values.</p></li>
+<li><p><strong>pixels</strong> (<em>Integer</em>) – Number of linear interpolation steps between each array value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>subpixel_image</strong> – array of pixel values with linearly interpolated subpixels</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+
 
           </div>
           
@@ -59,8 +188,14 @@
     </div>
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Installation.html">Quickstart Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">ef_angle_tan()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#edgefinder.edgefinder.ef_baseline"><code class="docutils literal notranslate"><span class="pre">ef_baseline()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#edgefinder.edgefinder.ef_crop"><code class="docutils literal notranslate"><span class="pre">ef_crop()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#edgefinder.edgefinder.ef_drop_edge"><code class="docutils literal notranslate"><span class="pre">ef_drop_edge()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#edgefinder.edgefinder.ef_full_analysis"><code class="docutils literal notranslate"><span class="pre">ef_full_analysis()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="#edgefinder.edgefinder.ef_subpixel"><code class="docutils literal notranslate"><span class="pre">ef_subpixel()</span></code></a></li>
 </ul>
 
 <div class="relations">
