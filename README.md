@@ -3,5 +3,5 @@
 
 # edgefinder
 
-
+[Documentation](https://mcnichon.github.io/edgefinder/)
 
