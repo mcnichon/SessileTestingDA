@@ -2,9 +2,10 @@ import numpy as np
 from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 import scipy.interpolate as interp
+import math
 
 
-def crop(pic, offset = 100, threshold_light = 200):
+def EF_crop(pic, offset = 100, threshold_light = 200):
     """Crops given image based on upon  light intensity threshold and a pixel offset
 
     Parameters
@@ -12,15 +13,14 @@ def crop(pic, offset = 100, threshold_light = 200):
     pic : np.array
         Array of pixel values from image to be cropped.
     offset : Integer
-        Pixel crop offset in the conservative direction making image larger
-
+        Crop offset in the conservative direction, resulting in larger image
     threshold_light : Integer
-        light intensity threshold for edge of illuminated region(1-255)
+        light intensity threshold for edge of illuminated region (1-255)
 
     Returns
     -------
     crop_image : np.array
-        cropped array (image) based upon threshold and offset
+        cropped image based upon threshold and offset
     """
 
     [x,y] = np.where(pic > threshold_light)
@@ -43,20 +43,20 @@ def crop(pic, offset = 100, threshold_light = 200):
 
     return crop_image
 
-def subpixel(pic, pixels = 2):
-    """Creates additional subpixels using linear interpolation
+def EF_subpixel(pic, pixels = 2):
+    """Creates additional subpixels in the image using linear interpolation
 
     Parameters
     ----------
     pic : np.array
-        Array of pixel values from image to be cropped.
+        Array of pixel values.
     pixels : Integer
         Number of linear interpolation steps between each array value
 
     Returns
     -------
-    subpixel_image : Pillow Image
-        image array with subpixels
+    subpixel_image : np.array
+        array of pixel values with linearly interpolated subpixels
     """
 
     X = np.linspace(0, pic.shape[0], pic.shape[0])
@@ -73,17 +73,17 @@ def subpixel(pic, pixels = 2):
 
     return subpixel_image
 
-def baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200 ,threshold_dark = 72):
-    """Finds the baseline of the droplet/stage
+def EF_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, threshold_dark = 72):
+    """Finds the baseline of stage
 
     Parameters
     ----------
     pic : np.array
-        Array of pixel values from image to be cropped.
+        Array of pixel values from image.
     bl_fit : Integer
         number of pixels used on the left and right side of image to linearly fit the baseline
     bl_ignore : Integer
-        number of pixels to offset on the left and right edge of the image when linearly fitting baseline
+        number of pixels to offset on the left and right edge of the illuminated region when linearly fitting baseline
     threshold_light : Integer
         light intensity threshold for edge of illuminated region (1-255)
     threshold_dark : Integer
@@ -91,15 +91,17 @@ def baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200 ,threshold_
 
     Returns
     -------
-    baseline : np.array
+    baseline_pts : np.array
         array of baseline xy locations
+    baseline_coe : np.array
+        array of coefficients for linear baseline equation
     """
 
     #Note X and Y are funky because the image origin is at the upper left and plotting starts at lower left
     x = pic.shape[0]
     y = pic.shape[1]
     edge_loc_y = np.zeros(y)
-    edge_loc_x = np.linspace(0, pic.shape[1], pic.shape[1])
+    edge_loc_x = np.linspace(0, pic.shape[1]-1, pic.shape[1])
     #Finds the edge location of the "dark" region starting at bottom left of image
     for i in range(y):
         for j in range(x):
@@ -124,27 +126,29 @@ def baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200 ,threshold_
             bl_y[i] = edge_loc_y[xmax-2*bl_fit + i - bl_ignore]
 
     baseline_coe = np.polyfit(bl_x,bl_y,1)
-    bl_x_fit = np.linspace(0,pic.shape[1],pic.shape[1])
-    bl_y_fit = np.polyval(baseline_coe,bl_x_fit)
+    bl_y_fit = np.polyval(baseline_coe,edge_loc_x)
 
-    plt.scatter(bl_x, bl_y,s = 50, c="pink")
+    #plt.scatter(bl_x, bl_y, s = 50, c="pink")
+    #plt.plot(edge_loc_x, edge_loc_y)
 
-    plt.plot(edge_loc_x, edge_loc_y)
-    baseline = np.stack((bl_x_fit,bl_y_fit))
+    baseline_pts = np.stack((edge_loc_x,bl_y_fit))
 
-    return baseline
+    return baseline_pts, baseline_coe
 
-def drop_edge(pic, baseline, threshold_dark = 72):
+def EF_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
     """Finds the edge of the drop
 
     Parameters
     ----------
     pic : np.array
-        Array of pixel values from image to be cropped.
+        Array of pixel values from image.
     baseline : np.array
         array of baseline xy locations calculated in "baseline"
+    bl_offset : Integer
+        number of pixels to offset above baseline when starting to find edge, should be greater than 1
     threshold_dark : Integer
         light intensity threshold for edge of baseplate/droplet (1-255)
+
     Returns
     -------
     drop_edge_left : np.array
@@ -177,7 +181,7 @@ def drop_edge(pic, baseline, threshold_dark = 72):
 
     temp = 0
     temp_x = 0
-    temp_y = 0
+    temp_y = bl_offset
     baseline_break = 0
 
     #Starts at the center point on the baseline, moves left/right until either going below baseline or reaching threshold value,
@@ -201,7 +205,7 @@ def drop_edge(pic, baseline, threshold_dark = 72):
             drop_edge_left_y.append(int(bl_center_y - temp_y))
             break
 
-    #If baseline is angled, will iterate "down and over" until reaching it
+    #If baseline is angled, will iterate "down and over" until reaching the baseline
     #Left Side Angled Baseline
     if baseline_break == 0:
         temp_x = drop_edge_left_x[0]+15
@@ -226,7 +230,7 @@ def drop_edge(pic, baseline, threshold_dark = 72):
 
     #Right Side
     temp_x = 0
-    temp_y = 0
+    temp_y = bl_offset
     baseline_break = 0
 
     while ~temp:
@@ -273,35 +277,104 @@ def drop_edge(pic, baseline, threshold_dark = 72):
 
     drop_edge_left = np.stack((np.array(drop_edge_left_x),np.array(drop_edge_left_y)))
     drop_edge_right = np.stack((np.array(drop_edge_right_x),np.array(drop_edge_right_y)))
-    plt.scatter(drop_edge_left[0],drop_edge_left[1], s=0.1)
-    plt.scatter(drop_edge_right[0],drop_edge_right[1], s=0.1)
+    #plt.scatter(drop_edge_left[0],drop_edge_left[1], s=0.1)
+    #plt.scatter(drop_edge_right[0],drop_edge_right[1], s=0.1)
 
     return drop_edge_left,drop_edge_right
 
+def EF_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 10):
+    """finds tangent line of the drop and the angle it forms with the baseline
 
-im = Image.open(r"C:\Users\ndmcn\PycharmProjects\SessileTestingDA\Example_Images\Test1Flip.png")
-im = ImageOps.grayscale(im)
-im1 = np.array(im)
+    Parameters
+    ----------
+    pic : np.array
+        Array of pixel values.
+    edge_left : np.array
+        array of droplet edge xy locations left of "midpoint"
+    edge_right : np.array
+        array of droplet edge xy locations right of "midpoint"
+    baseline_coe : np.array
+        array of coefficients of baseline
+    tan_ignore : Integer
+        number of points to ignore when fitting tan line
 
+    Returns
+    -------
+    drop_edge_left : np.array
+        array of droplet edge xy locations left of "midpoint"
+    drop_edge_right : np.array
+        array of droplet edge xy locations right of "midpoint"
+    intersection_left : np.array
+        xy location of intersection between tanget line and baseline right (3 phase point)
+    intersection_right : np.array
+        xy location of intersection between tanget line and baseline right (3 phase point)
+    angle   : np.array
+        left and right drop contact angle
 
-image_crop= crop(im1)
-image = Image.fromarray(image_crop)
+    """
 
-image_subpixel = subpixel(image_crop)
-image1 = Image.fromarray(image_subpixel)
+    edge_loc_x = np.linspace(0, pic.shape[1]-1, pic.shape[1])
 
-plt.imshow(image1)
+    tan_left_coe = np.polyfit(edge_left[0,tan_ignore:tan_ignore+tan_fit],edge_left[1,tan_ignore:tan_ignore+tan_fit],1)
+    tan_left_fit = np.polyval(tan_left_coe,edge_loc_x)
 
-image_baseline = baseline(image_subpixel)
+    tan_left_points = np.stack((edge_loc_x, tan_left_fit))
 
-plt.plot(image_baseline[0], image_baseline[1])
+    tan_right_coe = np.polyfit(edge_right[0,tan_ignore:tan_ignore+tan_fit],edge_right[1,tan_ignore:tan_ignore+tan_fit],1)
+    tan_right_fit = np.polyval(tan_right_coe,edge_loc_x)
 
-image_edge = drop_edge(image_subpixel, image_baseline)
-plt.imshow(image1)
+    tan_right_points = np.stack((edge_loc_x, tan_right_fit))
 
-plt.plot(image_baseline[0], image_baseline[1])
+    tan_left_vec = np.array([1, tan_left_coe[0]])
+    tan_right_vec = np.array([1, tan_right_coe[0]])
+    bl_vec = np.array([1, baseline_coe[0]])
+    if tan_left_coe[0] > 0:
+        angle_left = 180-math.acos(np.dot(bl_vec,tan_left_vec)/np.linalg.norm(tan_left_vec)*np.linalg.norm(bl_vec))*180/math.pi
+    else:
+        angle_left = math.acos(np.dot(bl_vec,tan_left_vec)/np.linalg.norm(tan_left_vec)*np.linalg.norm(bl_vec))*180/math.pi
+    if tan_right_coe[0] < 0:
+        angle_right = 180-math.acos(np.dot(bl_vec,tan_right_vec)/np.linalg.norm(tan_right_vec)*np.linalg.norm(bl_vec))*180/math.pi
+    else:
+        angle_right = math.acos(np.dot(bl_vec,tan_right_vec)/np.linalg.norm(tan_right_vec)*np.linalg.norm(bl_vec))*180/math.pi
 
-plt.show()
-print()
+    angle = np.array([angle_left,angle_right])
+    x = (baseline_coe[1]-tan_left_coe[1])/(tan_left_coe[0]-baseline_coe[0])
+    y = baseline_coe[0]*x+baseline_coe[1]
+    intersection_left = np.array([x,y])
 
-print()
+    x = (baseline_coe[1]-tan_right_coe[1])/(tan_right_coe[0]-baseline_coe[0])
+    y = baseline_coe[0]*x+baseline_coe[1]
+    intersection_right = np.array([x,y])
+
+    print()
+
+    return tan_left_points, tan_right_points, intersection_left, intersection_right, angle
+
+def EF_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72, bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 10):
+    """finds tangent line of the drop and the angle it forms with the baseline
+
+        Parameters
+        ----------
+        pic : np.array
+            Array of pixel values.
+
+        Others are defined in previous functions
+
+        Returns
+        -------
+
+        """
+
+    pic_crop = EF_crop(pic_array, offset = offset, threshold_light = threshold_light)
+    pic_subpixel = EF_subpixel(pic_crop, pixels = pixels)
+
+    pic_baseline, pic_baseline_coe = EF_baseline(pic_subpixel, bl_fit = bl_fit, bl_ignore = bl_ignore, threshold_light = threshold_light, threshold_dark = threshold_dark)
+
+    pic_edge_l, pic_edge_r = EF_drop_edge(pic_subpixel, pic_baseline, bl_offset=bl_offset, threshold_dark=threshold_dark)
+
+    pic_tan_l, pic_tan_r, pic_l, pic_intersection_r, pic_angle = EF_angle_tan(pic_subpixel, pic_edge_l, pic_edge_r, pic_baseline_coe, tan_ignore=tan_ignore, tan_fit=tan_fit)
+
+    print(pic_angle)
+
+    return
+
