@@ -9,7 +9,7 @@ import os
 import sys
 #1123
 
-sys.path.insert(0, os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("../edgefinder"))
 
 project = 'edgefinder'
 copyright = '2025, Nathaniel McNichols'
