@@ -5,7 +5,7 @@ import scipy.interpolate as interp
 import math
 
 
-def EF_crop(pic, offset = 100, threshold_light = 200):
+def ef_crop(pic, offset = 100, threshold_light = 200):
     """Crops given image based on upon  light intensity threshold and a pixel offset
 
     Parameters
@@ -43,7 +43,7 @@ def EF_crop(pic, offset = 100, threshold_light = 200):
 
     return crop_image
 
-def EF_subpixel(pic, pixels = 2):
+def ef_subpixel(pic, pixels = 2):
     """Creates additional subpixels in the image using linear interpolation
 
     Parameters
@@ -73,7 +73,7 @@ def EF_subpixel(pic, pixels = 2):
 
     return subpixel_image
 
-def EF_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, threshold_dark = 72):
+def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, threshold_dark = 72):
     """Finds the baseline of stage
 
     Parameters
@@ -135,7 +135,7 @@ def EF_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, thresho
 
     return baseline_pts, baseline_coe
 
-def EF_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
+def ef_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
     """Finds the edge of the drop
 
     Parameters
@@ -282,7 +282,7 @@ def EF_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
 
     return drop_edge_left,drop_edge_right
 
-def EF_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 15):
+def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 15):
     """finds tangent line of the drop and the angle it forms with the baseline
 
     Parameters
@@ -350,7 +350,7 @@ def EF_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
 
     return tan_left_points, tan_right_points, intersection_left, intersection_right, angle
 
-def EF_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72, bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 10):
+def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72, bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 10):
     """finds tangent line of the drop and the angle it forms with the baseline
 
         Parameters
@@ -365,14 +365,14 @@ def EF_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, thres
 
         """
 
-    pic_crop = EF_crop(pic, offset = offset, threshold_light = threshold_light)
-    pic_subpixel = EF_subpixel(pic_crop, pixels = pixels)
+    pic_crop = ef_crop(pic, offset = offset, threshold_light = threshold_light)
+    pic_subpixel = ef_subpixel(pic_crop, pixels = pixels)
 
-    pic_baseline, pic_baseline_coe = EF_baseline(pic_subpixel, bl_fit = bl_fit, bl_ignore = bl_ignore, threshold_light = threshold_light, threshold_dark = threshold_dark)
+    pic_baseline, pic_baseline_coe = ef_baseline(pic_subpixel, bl_fit = bl_fit, bl_ignore = bl_ignore, threshold_light = threshold_light, threshold_dark = threshold_dark)
 
-    pic_edge_l, pic_edge_r = EF_drop_edge(pic_subpixel, pic_baseline, bl_offset=bl_offset, threshold_dark=threshold_dark)
+    pic_edge_l, pic_edge_r = ef_drop_edge(pic_subpixel, pic_baseline, bl_offset=bl_offset, threshold_dark=threshold_dark)
 
-    pic_tan_l, pic_tan_r, pic_l, pic_intersection_r, pic_angle = EF_angle_tan(pic_subpixel, pic_edge_l, pic_edge_r, pic_baseline_coe, tan_ignore=tan_ignore, tan_fit=tan_fit)
+    pic_tan_l, pic_tan_r, pic_l, pic_intersection_r, pic_angle = ef_angle_tan(pic_subpixel, pic_edge_l, pic_edge_r, pic_baseline_coe, tan_ignore=tan_ignore, tan_fit=tan_fit)
 
     print(pic_angle)
 
