@@ -1,0 +1,1 @@
+.. automodule:: edgefinder.edgefinder
