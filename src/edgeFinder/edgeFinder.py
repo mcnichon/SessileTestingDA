@@ -365,7 +365,7 @@ def EF_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, thres
 
         """
 
-    pic_crop = EF_crop(pic_array, offset = offset, threshold_light = threshold_light)
+    pic_crop = EF_crop(pic, offset = offset, threshold_light = threshold_light)
     pic_subpixel = EF_subpixel(pic_crop, pixels = pixels)
 
     pic_baseline, pic_baseline_coe = EF_baseline(pic_subpixel, bl_fit = bl_fit, bl_ignore = bl_ignore, threshold_light = threshold_light, threshold_dark = threshold_dark)
