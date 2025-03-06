@@ -1,0 +1,34 @@
+[build-system]
+requires = [
+    "hatchling>=1.13.0",
+    "hatch-vcs>=0.3.0",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "edgeFinder"
+dynamic = ["version"]
+description = "Edge detection for sessile testing"
+readme = "README.md"
+license = { text = "MIT license" }  # SPDX short identifier
+authors = [
+  { name = "Nathaniel McNichols", email = "mcnichon@oregonstate.edu" },
+]
+requires-python = ">=3.13.1"
+
+dependencies = [
+    "scipy>=1.6.0",
+    "numpy>=2.2.3",  # compatible versions controlled through scipy\
+    "scipy>=1.15.2",
+]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"
+# Need to give root as we aren't at the same level as the git repo
+root = "."
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/rosen/_version.py"
