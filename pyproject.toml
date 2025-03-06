@@ -29,4 +29,4 @@ local_scheme = "no-local-version"
 root = "."
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/edgeFinder/_version.py"
+version-file = "src/edgefinder/_version.py"
