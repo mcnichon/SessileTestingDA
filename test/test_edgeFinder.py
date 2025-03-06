@@ -1,4 +1,4 @@
-import src.edgeFinder.edgeFinder as eff
+import edgeFinder.edgeFinder as eff
 import pytest as test
 
 def test_EF_crop():
