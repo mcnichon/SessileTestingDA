@@ -14,7 +14,7 @@ license = { text = "MIT license" }  # SPDX short identifier
 authors = [
   { name = "Nathaniel McNichols", email = "mcnichon@oregonstate.edu" },
 ]
-requires-python = ">=3.13.1"
+requires-python = ">=3.10.11"
 
 dependencies = [
     "scipy>=1.15.2",
