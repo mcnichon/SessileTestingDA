@@ -1,4 +1,4 @@
-import src.edgeFinder.edgeFinder as eff
+import edgeFinder.edgeFinder as eff
 import numpy as np
 from PIL import Image, ImageOps
 import matplotlib.pyplot as plt

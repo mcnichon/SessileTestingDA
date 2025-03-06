@@ -17,8 +17,6 @@ authors = [
 requires-python = ">=3.13.1"
 
 dependencies = [
-    "scipy>=1.6.0",
-    "numpy>=2.2.3",  # compatible versions controlled through scipy\
     "scipy>=1.15.2",
 ]
 
@@ -31,4 +29,4 @@ local_scheme = "no-local-version"
 root = "."
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/rosen/_version.py"
+version-file = "src/edgeFinder/_version.py"
