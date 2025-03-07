@@ -37,7 +37,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="edgefinder.edgefinder.ef_angle_tan">
 <span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_angle_tan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline_coe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tan_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_angle_tan" title="Link to this definition">¶</a></dt>
-<dd><p>finds tangent line of the drop and the angle it forms with the baseline</p>
+<dd><p>Finds tangent line of the drop and the angle it forms with the baseline.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -46,12 +46,13 @@
 <li><p><strong>edge_right</strong> (<em>np.array</em>) – array of droplet edge xy locations right of “midpoint”</p></li>
 <li><p><strong>baseline_coe</strong> (<em>np.array</em>) – array of coefficients of baseline</p></li>
 <li><p><strong>tan_ignore</strong> (<em>Integer</em>) – number of points to ignore when fitting tan line</p></li>
+<li><p><strong>fit</strong> (<em>tan</em>) – number of points to fit tan line</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>drop_edge_left</strong> (<em>np.array</em>) – array of droplet edge xy locations left of “midpoint”</p></li>
-<li><p><strong>drop_edge_right</strong> (<em>np.array</em>) – array of droplet edge xy locations right of “midpoint”</p></li>
+<li><p><strong>tan_left_poionts</strong> (<em>np.array</em>) – array of tangent xy locations for left edge of drop</p></li>
+<li><p><strong>tan_right_points</strong> (<em>np.array</em>) – array of tangent xy locations for right edge of drop</p></li>
 <li><p><strong>intersection_left</strong> (<em>np.array</em>) – xy location of intersection between tanget line and baseline right (3 phase point)</p></li>
 <li><p><strong>intersection_right</strong> (<em>np.array</em>) – xy location of intersection between tanget line and baseline right (3 phase point)</p></li>
 <li><p><strong>angle</strong> (<em>np.array</em>) – left and right drop contact angle</p></li>
@@ -64,7 +65,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="edgefinder.edgefinder.ef_baseline">
 <span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_light</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">72</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_baseline" title="Link to this definition">¶</a></dt>
-<dd><p>Finds the baseline of stage</p>
+<dd><p>Finds the baseline of stage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -78,7 +79,7 @@
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>baseline_pts</strong> (<em>np.array</em>) – array of baseline xy locations</p></li>
-<li><p><strong>baseline_coe</strong> (<em>np.array</em>) – array of coefficients for linear baseline equation</p></li>
+<li><p><strong>baseline_coe</strong> (<em>np.array</em>) – array of coefficients for linear baseline equation [c1*x^n+c2*x^n-1…c3*x^0]</p></li>
 </ul>
 </p>
 </dd>
@@ -92,7 +93,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values from image to be cropped.</p></li>
+<li><p><strong>pic</strong> (<em>PIL.Image</em>)</p></li>
 <li><p><strong>offset</strong> (<em>Integer</em>) – Crop offset in the conservative direction, resulting in larger image</p></li>
 <li><p><strong>threshold_light</strong> (<em>Integer</em>) – light intensity threshold for edge of illuminated region (1-255)</p></li>
 </ul>
@@ -109,7 +110,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="edgefinder.edgefinder.ef_drop_edge">
 <span class="sig-prename descclassname"><span class="pre">edgefinder.edgefinder.</span></span><span class="sig-name descname"><span class="pre">ef_drop_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bl_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_dark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">72</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#edgefinder.edgefinder.ef_drop_edge" title="Link to this definition">¶</a></dt>
-<dd><p>Finds the edge of the drop</p>
+<dd><p>Finds the edge of the drop.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -136,8 +137,17 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>pic</strong> (<em>np.array</em>) – Array of pixel values.</p></li>
-<li><p><strong>functions</strong> (<em>Others are defined in previous</em>)</p></li>
+<li><p><strong>pic</strong> (<em>PIL.Image</em>)</p></li>
+<li><p><strong>offset</strong> (<em>Integer</em>) – Crop offset in the conservative direction, resulting in larger image</p></li>
+<li><p><strong>pixels</strong> (<em>Integer</em>) – Number of linear interpolation steps between each array value</p></li>
+<li><p><strong>threshold_light</strong> (<em>Integer</em>) – light intensity threshold for edge of illuminated region (1-255)</p></li>
+<li><p><strong>threshold_dark</strong> (<em>Integer</em>) – light intensity threshold for edge of baseplate (1-255)</p></li>
+<li><p><strong>bl_fit</strong> (<em>Integer</em>) – number of pixels used on the left and right side of image to linearly fit the baseline</p></li>
+<li><p><strong>bl_ignore</strong> (<em>Integer</em>) – number of pixels to offset on the left and right edge of the illuminated region when linearly fitting baseline</p></li>
+<li><p><strong>bl_offset</strong> (<em>Integer</em>) – number of pixels to offset above baseline when starting to find edge, should be greater than 1</p></li>
+<li><p><strong>tan_ignore</strong> (<em>Integer</em>) – number of points to ignore when fitting tan line</p></li>
+<li><p><strong>fit</strong> (<em>tan</em>) – number of points to fit tan line</p></li>
+<li><p><strong>angle</strong> (<em>np.array</em>) – left and right drop contact angle</p></li>
 </ul>
 </dd>
 </dl>
