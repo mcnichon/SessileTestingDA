@@ -20,8 +20,7 @@ dependencies = [
     "scipy>=1.15.2",
     "pillow>=11.1.0",
     "matplotlib>=3.10.1",
-    "pathlib>=1.0.1",
-    "pytest>=8.3.5"
+    "pathlib>=1.0.1"
 ]
 
 [tool.hatch.version]
