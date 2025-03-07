@@ -59,12 +59,34 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="nb">list</span>
 </pre></div>
 </div>
-<p><cite>pip list</cite> should show:</p>
+<p>To utilize the code within a python workspace, one must add the following to their code. The package alias can be whatever the user wants, here <code class="docutils literal notranslate"><span class="pre">ef</span></code> is used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">edgefinder.edgefinder</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ef</span>
+</pre></div>
+</div>
 <p>Currently there exists no support to install the package with PyPi.</p>
 </section>
 <section id="example-problems">
 <h2>Example Problems<a class="headerlink" href="#example-problems" title="Link to this heading">¶</a></h2>
-<p>Two example problems are provided in the repository Example_Single_Image.py and Example_Multiple_Images.py, located in the Examples directory.</p>
+<p>Two example problems are provided in the repository Example_Single_Image.py and Example_Multiple_Images.py, located in the Examples directory. The first example analyzes a single image utilizing all package functions except <code class="docutils literal notranslate"><span class="pre">ef_full_analysis</span></code>. A snippit of the example code is provided below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_test</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Example_Images/Example_Image_2.png&quot;</span><span class="p">)</span>
+
+<span class="c1">#Functions from package</span>
+<span class="n">image_crop</span><span class="o">=</span> <span class="n">ef</span><span class="o">.</span><span class="n">ef_crop</span><span class="p">(</span><span class="n">image_test</span><span class="p">)</span>
+<span class="n">image_subpixel</span> <span class="o">=</span> <span class="n">ef</span><span class="o">.</span><span class="n">ef_subpixel</span><span class="p">(</span><span class="n">image_crop</span><span class="p">)</span>
+<span class="n">image_baseline</span><span class="p">,</span> <span class="n">image_baseline_coe</span> <span class="o">=</span> <span class="n">ef</span><span class="o">.</span><span class="n">ef_baseline</span><span class="p">(</span><span class="n">image_subpixel</span><span class="p">)</span>
+<span class="n">image_edge_l</span><span class="p">,</span> <span class="n">image_edge_r</span> <span class="o">=</span> <span class="n">ef</span><span class="o">.</span><span class="n">ef_drop_edge</span><span class="p">(</span><span class="n">image_subpixel</span><span class="p">,</span> <span class="n">image_baseline</span><span class="p">)</span>
+<span class="n">image_tan_l</span><span class="p">,</span> <span class="n">image_tan_r</span><span class="p">,</span> <span class="n">intersection_l</span><span class="p">,</span> <span class="n">intersection_r</span><span class="p">,</span> <span class="n">image_angle</span> <span class="o">=</span> <span class="n">ef</span><span class="o">.</span><span class="n">ef_angle_tan</span><span class="p">(</span><span class="n">image_subpixel</span><span class="p">,</span> <span class="n">image_edge_l</span><span class="p">,</span> <span class="n">image_edge_r</span><span class="p">,</span> <span class="n">image_baseline_coe</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First,  an image needs to be opened utilizing the <code class="docutils literal notranslate"><span class="pre">Pillow</span> <span class="pre">Image</span></code> class. <code class="docutils literal notranslate"><span class="pre">image_test</span> <span class="pre">=</span> <span class="pre">Image.open(r&quot;Example_Images/Example_Image_1.png&quot;)</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">ef.ef_crop</span></code> converts the image to greyscale and then an <code class="docutils literal notranslate"><span class="pre">np.array</span></code> that contains the pixel light intensity values (0-255, with 0 and 255 being black and white respectively). The image is then cropped around the <code class="docutils literal notranslate"><span class="pre">illuminated</span> <span class="pre">region</span></code> that is defined by <code class="docutils literal notranslate"><span class="pre">threshold_light</span></code> with a default value of 200 or a user specified value. This is shown below.</p>
+<a class="reference internal image-reference" href="_images/crop.png"><img alt="_images/crop.png" src="_images/crop.png" style="width: 600px;" />
+</a>
+<p><code class="docutils literal notranslate"><span class="pre">ef.ef_subpixel</span></code> linearly interpolates between all points in the image matrix to artifically increase its resolution.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ef.ef_baseline</span></code> starts at the bottom left corner of the image, finding the first instance in each row where the pixel reaches the edge of the baseplate/drop via the <code class="docutils literal notranslate"><span class="pre">threshold_dark</span></code> pixel value . A linear fit is then applied to select points at the two ends of this array defined by <code class="docutils literal notranslate"><span class="pre">bl_fit</span></code> and <code class="docutils literal notranslate"><span class="pre">bl_ignore</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ef.ef_edge</span></code> finds the left and right edge of the droplet, as defined by the <code class="docutils literal notranslate"><span class="pre">threshold_dark</span></code> value, by starting in its approximate center and iterating up until reaching the top. Then, it iterates down from the center stopping if the baseline is reached before the threshold value. This will account for any non-horizontal baselines.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ef.ef_tan</span></code> finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by <code class="docutils literal notranslate"><span class="pre">tan_fit</span></code> and <code class="docutils literal notranslate"><span class="pre">tan_ignore</span></code> variables to account for inconsistencies in the image.</p>
+<p>The result of each of these functions is shown below on an analyzed image.</p>
 </section>
 </section>
 
