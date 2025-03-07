@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 from pytest import approx
 
 def test_ef_crop():
-    image_test = Image.open(r"Test_image.png")
+    image_test = Image.open(r"./test/Test_image.png")
 
     image_crop = ef.ef_crop(image_test)
 
