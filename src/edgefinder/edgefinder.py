@@ -295,7 +295,7 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
         array of coefficients of baseline
     tan_ignore : Integer
         number of points to ignore when fitting tan line
-    tan fit : Integer
+    tan_fit : Integer
         number of points to fit tan line
 
     Returns
@@ -376,7 +376,7 @@ def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, thres
         number of pixels to offset above baseline when starting to find edge, should be greater than 1
     tan_ignore : Integer
         number of points to ignore when fitting tan line
-    tan fit : Integer
+    tan_fit : Integer
         number of points to fit tan line
 
         Returns
