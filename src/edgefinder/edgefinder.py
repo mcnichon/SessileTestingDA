@@ -1,6 +1,5 @@
 import numpy as np
 from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
 import scipy.interpolate as interp
 import math
 
@@ -10,8 +9,7 @@ def ef_crop(pic, offset = 100, threshold_light = 200):
 
     Parameters
     ----------
-    pic : np.array
-        Array of pixel values from image to be cropped.
+    pic : PIL.Image
     offset : Integer
         Crop offset in the conservative direction, resulting in larger image
     threshold_light : Integer
@@ -22,6 +20,9 @@ def ef_crop(pic, offset = 100, threshold_light = 200):
     crop_image : np.array
         cropped image based upon threshold and offset
     """
+
+    pic = ImageOps.grayscale(pic)
+    pic = np.array(pic)
 
     [x,y] = np.where(pic > threshold_light)
 
@@ -74,7 +75,7 @@ def ef_subpixel(pic, pixels = 2):
     return subpixel_image
 
 def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, threshold_dark = 72):
-    """Finds the baseline of stage
+    """Finds the baseline of stage.
 
     Parameters
     ----------
@@ -94,7 +95,7 @@ def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, thresho
     baseline_pts : np.array
         array of baseline xy locations
     baseline_coe : np.array
-        array of coefficients for linear baseline equation
+        array of coefficients for linear baseline equation [c1*x^n+c2*x^n-1...c3*x^0]
     """
 
     #Note X and Y are funky because the image origin is at the upper left and plotting starts at lower left
@@ -102,6 +103,7 @@ def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, thresho
     y = pic.shape[1]
     edge_loc_y = np.zeros(y)
     edge_loc_x = np.linspace(0, pic.shape[1]-1, pic.shape[1])
+
     #Finds the edge location of the "dark" region starting at bottom left of image
     for i in range(y):
         for j in range(x):
@@ -116,7 +118,7 @@ def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, thresho
     bl_x = np.zeros(2*bl_fit)
     bl_y = np.zeros(2*bl_fit)
 
-    #Finds baseline points from edge of illuminated region
+    #Finds baseline points through linear fit of edge of illuminated region
     for i in range(2*bl_fit):
         if i < bl_fit:
             bl_x[i] = xmin+i+bl_ignore+i
@@ -128,15 +130,12 @@ def ef_baseline(pic, bl_fit = 20, bl_ignore = 20, threshold_light = 200, thresho
     baseline_coe = np.polyfit(bl_x,bl_y,1)
     bl_y_fit = np.polyval(baseline_coe,edge_loc_x)
 
-    #plt.scatter(bl_x, bl_y, s = 50, c="pink")
-    #plt.plot(edge_loc_x, edge_loc_y)
-
     baseline_pts = np.stack((edge_loc_x,bl_y_fit))
 
     return baseline_pts, baseline_coe
 
 def ef_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
-    """Finds the edge of the drop
+    """Finds the edge of the drop.
 
     Parameters
     ----------
@@ -277,13 +276,12 @@ def ef_drop_edge(pic, baseline, bl_offset = 5, threshold_dark = 72):
 
     drop_edge_left = np.stack((np.array(drop_edge_left_x),np.array(drop_edge_left_y)))
     drop_edge_right = np.stack((np.array(drop_edge_right_x),np.array(drop_edge_right_y)))
-    #plt.scatter(drop_edge_left[0],drop_edge_left[1], s=0.1)
-    #plt.scatter(drop_edge_right[0],drop_edge_right[1], s=0.1)
+
 
     return drop_edge_left,drop_edge_right
 
 def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_fit = 15):
-    """finds tangent line of the drop and the angle it forms with the baseline
+    """Finds tangent line of the drop and the angle it forms with the baseline.
 
     Parameters
     ----------
@@ -297,13 +295,15 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
         array of coefficients of baseline
     tan_ignore : Integer
         number of points to ignore when fitting tan line
+    tan fit : Integer
+        number of points to fit tan line
 
     Returns
     -------
-    drop_edge_left : np.array
-        array of droplet edge xy locations left of "midpoint"
-    drop_edge_right : np.array
-        array of droplet edge xy locations right of "midpoint"
+    tan_left_poionts : np.array
+        array of tangent xy locations for left edge of drop
+    tan_right_points : np.array
+        array of tangent xy locations for right edge of drop
     intersection_left : np.array
         xy location of intersection between tanget line and baseline right (3 phase point)
     intersection_right : np.array
@@ -328,6 +328,8 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
     tan_left_vec = np.array([1, tan_left_coe[0]])
     tan_right_vec = np.array([1, tan_right_coe[0]])
     bl_vec = np.array([1, baseline_coe[0]])
+
+    #Calculates liquid angle of three phase point
     if tan_left_coe[0] > 0:
         angle_left = 180-math.acos(np.dot(bl_vec,tan_left_vec)/np.linalg.norm(tan_left_vec)*np.linalg.norm(bl_vec))*180/math.pi
     else:
@@ -338,6 +340,8 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
         angle_right = math.acos(np.dot(bl_vec,tan_right_vec)/np.linalg.norm(tan_right_vec)*np.linalg.norm(bl_vec))*180/math.pi
 
     angle = np.array([angle_left,angle_right])
+
+    #Calculates left and right intersection point between tangent line and baseline
     x = (baseline_coe[1]-tan_left_coe[1])/(tan_left_coe[0]-baseline_coe[0])
     y = baseline_coe[0]*x+baseline_coe[1]
     intersection_left = np.array([x,y])
@@ -353,16 +357,32 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
 def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72, bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 10):
     """finds tangent line of the drop and the angle it forms with the baseline
 
-        Parameters
-        ----------
-        pic : np.array
-            Array of pixel values.
-
-        Others are defined in previous functions
+    Parameters
+    ----------
+    pic : PIL.Image
+    offset : Integer
+        Crop offset in the conservative direction, resulting in larger image
+    pixels : Integer
+        Number of linear interpolation steps between each array value
+    threshold_light : Integer
+        light intensity threshold for edge of illuminated region (1-255)
+    threshold_dark : Integer
+        light intensity threshold for edge of baseplate (1-255)
+    bl_fit : Integer
+        number of pixels used on the left and right side of image to linearly fit the baseline
+    bl_ignore : Integer
+        number of pixels to offset on the left and right edge of the illuminated region when linearly fitting baseline
+    bl_offset : Integer
+        number of pixels to offset above baseline when starting to find edge, should be greater than 1
+    tan_ignore : Integer
+        number of points to ignore when fitting tan line
+    tan fit : Integer
+        number of points to fit tan line
 
         Returns
         -------
-
+    angle   : np.array
+        left and right drop contact angle
         """
 
     pic_crop = ef_crop(pic, offset = offset, threshold_light = threshold_light)
@@ -374,7 +394,4 @@ def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, thres
 
     pic_tan_l, pic_tan_r, pic_l, pic_intersection_r, pic_angle = ef_angle_tan(pic_subpixel, pic_edge_l, pic_edge_r, pic_baseline_coe, tan_ignore=tan_ignore, tan_fit=tan_fit)
 
-    print(pic_angle)
-
-    return
-
+    return pic_angle
