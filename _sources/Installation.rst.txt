@@ -39,7 +39,7 @@ Currently there exists no support to install the package with PyPi.
 Example Problems
 -------------
 
-Two example problems are provided in the repository ``Example_Single_Image.py`` and ``Example_Multiple_Images.py``, located in the Examples directory. The first example analyzes a single image utilizing all package functions except ``ef_full_analysis``. A snippet of the example code is provided below:
+Two example problems are provided in the repository ``Example_Single_Image.py`` and ``Example_Multiple_Images.py``, located in the Examples directory. The first example analyzes a single image utilizing all package functions except ``ef_full_analysis``. A snippet pertaining to the ``edgefinder`` functionality is provided below:
 
 .. code-block:: python
 
@@ -52,9 +52,12 @@ Two example problems are provided in the repository ``Example_Single_Image.py`` 
     image_edge_l, image_edge_r = ef.ef_drop_edge(image_subpixel, image_baseline)
     image_tan_l, image_tan_r, intersection_l, intersection_r, image_angle = ef.ef_angle_tan(image_subpixel, image_edge_l, image_edge_r, image_baseline_coe)
 
-First,  an image needs to be opened utilizing the ``Pillow Image`` class. ``image_test = Image.open(r"Example_Images/Example_Image_1.png")``
 
-``ef.ef_crop`` converts the image to greyscale and then an ``np.array`` that contains the pixel light intensity values (0-255, with 0 and 255 being black and white respectively). The image is then cropped around the ``illuminated region`` that is defined by ``threshold_light`` with a default value of 200 or a user specified value. This is shown below.
+First, an image needs to be opened utilizing the ``Pillow Image`` class, which is done with the first line of code provided in the snippet.
+
+The remaining code contains ``edgefinder`` specific functions whos functionality will be explored.
+
+``ef.ef_crop`` converts the image to greyscale and then an ``np.array`` that contains the pixel light intensity values (0-255, with 0 and 255 being black and white respectively). Within this array, the 'illuminated region,' defined by the ``threshold_light`` variable, with a default value of 200, is found. The minimum and maximum xy locations combined with the ``offset`` variable are then used to define the region where the image will be cropped. ``Offset`` defines a number of pixels in the conservative (making image larger) direction to subtract/add to the min/maximum pixel locations. 
 
 .. image:: images/crop.png
     :width: 600
