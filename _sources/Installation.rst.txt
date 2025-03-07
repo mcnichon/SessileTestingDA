@@ -62,15 +62,23 @@ The remaining code contains ``edgefinder`` specific functions whos functionality
 .. image:: images/crop.png
     :width: 600
 
-``ef.ef_subpixel`` linearly interpolates between all points in the image matrix to artificially  increase its resolution.
+``ef.ef_subpixel`` linearly interpolates between all points in the image matrix, artificially increasing its resolution.
 
-``ef.ef_baseline`` iterates through the pixel array, starting at the bottom left corner of the image. The first instance in each column where the pixel reaches the edge of the baseplate/drop via the ``threshold_dark`` pixel value is recorded. Points from this array corresponding to the edges of the illuminated region, and further defined by ``bl_fit`` and ``bl_ignore`` are then used to find a linear fit for the baseline of the sample stage. 
+``ef.ef_baseline`` finds the baseline of the sample stage (red). It does this by iterating through each row of the pixel array until it the pixel value reaches the ``threshold_dark`` value, with one y location per column being recorded (green). A linear interpolation is applied to a specified number of xy locations taken from this array (blue), specified by ``bl_fit`` and ``bl_ignore``. These pixels start at the column corresponding to the edge of the 'illuminated' region as described above.
 
-``ef.ef_edge`` finds the left and right edge of the droplet, as defined by the ``threshold_dark`` value. Starting at the droplets approximate center, pixel values in the row will be iterated through until reaching the ``threshold_dark`` value. This will be repeated in every row until the center column also passes this value, after which we will leave the top of the droplet. If the pixel location that is being evaluated drops below the baseline before reaching the threshold value, then it stops searching in that direction. This can be seen in the expanded view in the image below. The green droplet edge does not drop below the red baseline. This function is capable of analyzing non-horizontal baseplates.
+.. image:: images/Baseline.png
+    :width: 600
 
-``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by the ``tan_fit`` and ``tan_ignore`` variables to account for inconsistencies in the image. Additionally, within this function, vector math between the tangent and baseline is done to calculate the contact angle between the droplet and baseplate.
+``ef.ef_edge`` finds the left and right edge of the droplet, as defined by the ``threshold_dark`` value. This analysis starts ``bl_offset`` pixels above the baseline at the 'middle' of the drop, approximated by the middle of the green line from ``ef.ef_baseline``. This point is denoted by the blue dot in the image below. From this point, left and right pixel intensity values will be evaluated until passing the ``threshold_dark`` value, after which, the process will repeat in the row above. If the pixel in the row above the midpoint is greater than the threshold, we know we have reached the top of the droplet. To account for angled baselines, a similar process is taken starting at the above found edge, not the center. On both the left and right side, pixels will be evaluated until passing below the baesline. This can be seen in the expanded view in the picture below, where the edge of the drop (green) stops at the baseline (red).
 
-The result of each of these functions is shown below.
+**NOTE:** Expanded views are flipped due to the differences in origin locations of plots and images. Images are displayed with the (0,0) at the upper left.
+
+.. image:: images/Edge.png
+    :width: 600
+
+``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by the ``tan_fit`` and ``tan_ignore`` variables and taken from the ``ef.ef_edge`` 'edge location' matrix. In addition, matrix math between the tangent line and baseline is performed to calculate the contact angle of the drop.
+
+An annotated example of the results from these functions is provided below. 
 
 .. image:: images/fullanalysis.png
     :width: 800
