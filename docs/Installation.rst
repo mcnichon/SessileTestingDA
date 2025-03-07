@@ -12,9 +12,9 @@ Currently, to install the package, the github repository must to be cloned. To d
 
     git clone https://github.com/mcnichon/edgefinder.git
 
-**NOTE: More detailed instructions pertaining to cloning github repositories can be found here:** https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
+**NOTE:** More detailed instructions pertaining to cloning github repositories can be found `here <https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository>`_
 
-* Navigate to the repository's directory, which should contain a 'pyproject.toml'
+* Navigate to the repository's directory, which should contain a ``pyproject.toml`` file.
 * From this repository copy the following code into your terminal to install the package and all dependencies:
 
 .. code-block:: python
@@ -26,6 +26,10 @@ Currently, to install the package, the github repository must to be cloned. To d
 .. code-block:: python
 
     pip list
+
+`pip list` should show:
+
+
 
 Currently there exists no support to install the package with PyPi.
 
