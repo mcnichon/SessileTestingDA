@@ -39,7 +39,7 @@ Currently there exists no support to install the package with PyPi.
 Example Problems
 -------------
 
-Two example problems are provided in the repository Example_Single_Image.py and Example_Multiple_Images.py, located in the Examples directory. The first example analyzes a single image utilizing all package functions except ``ef_full_analysis``. A snippit of the example code is provided below:
+Two example problems are provided in the repository ``Example_Single_Image.py`` and ``Example_Multiple_Images.py``, located in the Examples directory. The first example analyzes a single image utilizing all package functions except ``ef_full_analysis``. A snippet of the example code is provided below:
 
 .. code-block:: python
 
@@ -59,12 +59,21 @@ First,  an image needs to be opened utilizing the ``Pillow Image`` class. ``imag
 .. image:: images/crop.png
     :width: 600
 
-``ef.ef_subpixel`` linearly interpolates between all points in the image matrix to artifically increase its resolution.
+``ef.ef_subpixel`` linearly interpolates between all points in the image matrix to artificially  increase its resolution.
 
-``ef.ef_baseline`` starts at the bottom left corner of the image, finding the first instance in each row where the pixel reaches the edge of the baseplate/drop via the ``threshold_dark`` pixel value . A linear fit is then applied to select points at the two ends of this array defined by ``bl_fit`` and ``bl_ignore``. 
+``ef.ef_baseline`` iterates through the pixel array, starting at the bottom left corner of the image, and the first instance in each column where the pixel reaches the edge of the baseplate/drop via the ``threshold_dark`` pixel value. Points from this array corresponding to the edges of the illuminated region, and further defined by``bl_fit`` and ``bl_ignore`` are then used to find a linear fit for the baseline of the sample stage. 
 
-``ef.ef_edge`` finds the left and right edge of the droplet, as defined by the ``threshold_dark`` value, by starting in its approximate center and iterating up until reaching the top. Then, it iterates down from the center stopping if the baseline is reached before the threshold value. This will account for any non-horizontal baselines.
+``ef.ef_edge`` finds the left and right edge of the droplet, as defined by the ``threshold_dark`` value. Starting at the droplets approximate center, pixel values in the row will be iterated through until reaching the ``threshold_dark`` value. This will be repeated in every row until the center column also passes this value, after which we will leave the top of the droplet. If the pixel location that is being evaluated drops below the baseline before reaching the threshold value, then it stops searching in that direction. This can be seen in the expanded view in the image below. The green droplet edge does not drop below the red baseline. This function is capable of analyzing non-horizontal baseplates.
 
-``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by ``tan_fit`` and ``tan_ignore`` variables to account for inconsistencies in the image.
+``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by ``tan_fit`` and ``tan_ignore`` variables to account for inconsistencies in the image. Additionally, within this function, vector math between the tangent and baseline is done to calculate the contact angle between the droplet and baseplate.
 
-The result of each of these functions is shown below on an analyzed image.
+The result of each of these functions is shown below.
+
+.. image:: images/fullanalysis.png
+    :width: 800
+
+All functions have default values pertaining to fitting parameters and can be finetuned by the user. The default values provided produce good results on the example images.
+
+The second example, ``Example_Multiple_Images.py`` shows how thispackage  might be applied to folders with more than one image.
+
+Within these two examples, the function ``ef.ef_full_analysis`` is not used. This function is intended to simplify the entire process, combining all previously described functions into one, outputting only an angle. Thus, if one wishes to plot any of the results other than angle, the above process should be taken.
