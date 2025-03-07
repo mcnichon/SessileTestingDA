@@ -6,7 +6,7 @@ requires = [
 build-backend = "hatchling.build"
 
 [project]
-name = "edgeFinder"
+name = "edgefinder"
 dynamic = ["version"]
 description = "Edge detection for sessile testing"
 readme = "README.md"
