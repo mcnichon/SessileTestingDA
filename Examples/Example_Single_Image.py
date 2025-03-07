@@ -3,7 +3,7 @@ from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
 
 #Use Example_Image_1.png or Example_Image_2.png
-image_test = Image.open(r"Example_Images/Example_Image_2.png")
+image_test = Image.open(r"Example_Images/Example_Image_1.png")
 
 #call functions from package
 image_crop= ef.ef_crop(image_test)
@@ -40,4 +40,4 @@ for ax in main_ax, inset_ax:
 main_ax.indicate_inset_zoom(inset_ax,edgecolor='blue')
 
 plt.show()
-print(image_angle)
+print(r"Angle of contact left/right:", image_angle)

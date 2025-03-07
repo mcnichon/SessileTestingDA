@@ -354,7 +354,8 @@ def ef_angle_tan(pic, edge_left, edge_right, baseline_coe, tan_ignore = 10, tan_
 
     return tan_left_points, tan_right_points, intersection_left, intersection_right, angle
 
-def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72, bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 10):
+def ef_full_analysis(pic, offset = 100, pixels = 2, threshold_light = 200, threshold_dark = 72,
+                     bl_fit = 20, bl_ignore = 20, bl_offset = 5, tan_ignore = 10, tan_fit = 15):
     """finds tangent line of the drop and the angle it forms with the baseline
 
     Parameters

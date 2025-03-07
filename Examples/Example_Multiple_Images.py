@@ -65,5 +65,3 @@ plt.scatter(time,all_angles[:,1])
 plt.legend(("left angle","right angle"))
 plt.title("Angle vs. Time")
 plt.show()
-
-print(image_angle)
