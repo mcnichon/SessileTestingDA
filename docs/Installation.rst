@@ -61,11 +61,11 @@ First,  an image needs to be opened utilizing the ``Pillow Image`` class. ``imag
 
 ``ef.ef_subpixel`` linearly interpolates between all points in the image matrix to artificially  increase its resolution.
 
-``ef.ef_baseline`` iterates through the pixel array, starting at the bottom left corner of the image, and the first instance in each column where the pixel reaches the edge of the baseplate/drop via the ``threshold_dark`` pixel value. Points from this array corresponding to the edges of the illuminated region, and further defined by``bl_fit`` and ``bl_ignore`` are then used to find a linear fit for the baseline of the sample stage. 
+``ef.ef_baseline`` iterates through the pixel array, starting at the bottom left corner of the image. The first instance in each column where the pixel reaches the edge of the baseplate/drop via the ``threshold_dark`` pixel value is recorded. Points from this array corresponding to the edges of the illuminated region, and further defined by ``bl_fit`` and ``bl_ignore`` are then used to find a linear fit for the baseline of the sample stage. 
 
 ``ef.ef_edge`` finds the left and right edge of the droplet, as defined by the ``threshold_dark`` value. Starting at the droplets approximate center, pixel values in the row will be iterated through until reaching the ``threshold_dark`` value. This will be repeated in every row until the center column also passes this value, after which we will leave the top of the droplet. If the pixel location that is being evaluated drops below the baseline before reaching the threshold value, then it stops searching in that direction. This can be seen in the expanded view in the image below. The green droplet edge does not drop below the red baseline. This function is capable of analyzing non-horizontal baseplates.
 
-``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by ``tan_fit`` and ``tan_ignore`` variables to account for inconsistencies in the image. Additionally, within this function, vector math between the tangent and baseline is done to calculate the contact angle between the droplet and baseplate.
+``ef.ef_tan`` finds the tangent line next of the droplet where it touches the baseplate. Similar to the baseline, the points used for this linear interpolation are defined by the ``tan_fit`` and ``tan_ignore`` variables to account for inconsistencies in the image. Additionally, within this function, vector math between the tangent and baseline is done to calculate the contact angle between the droplet and baseplate.
 
 The result of each of these functions is shown below.
 
