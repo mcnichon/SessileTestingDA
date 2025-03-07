@@ -37,13 +37,33 @@
 <h1>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h1>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Currently, to install the package, the github repository must to be cloned. It is recommended that this be done into an empty directory with a new virtual enviornment.
-When in the new directory, type:</p>
+<p>Currently, to install the package, the github repository must to be cloned. To do this:</p>
+<ul class="simple">
+<li><p>Open a terminal and navigate to the directory you wish to install the package in. It is recommended that this be a new directory with a clean virtual environment.</p></li>
+<li><p>Copy the following commands into your terminal, this will clone the repository.</p></li>
+</ul>
 <div class="highlight-linux notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/mcnichon/edgefinder.git
 </pre></div>
 </div>
-<p>More detailed instructions pertaining to cloning github repositiroies can be found ‘here’_
-.._ here: <a class="reference external" href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository</a></p>
+<p><strong>NOTE: More detailed instructions pertaining to cloning github repositories can be found here:</strong> <a class="reference external" href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository</a></p>
+<ul class="simple">
+<li><p>Navigate to the repository’s directory, which should contain a ‘pyproject.toml’</p></li>
+<li><p>From this repository copy the following code into your terminal to install the package and all dependencies:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Verify that the package and dependencies have been installed with:</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="nb">list</span>
+</pre></div>
+</div>
+<p>Currently there exists no support to install the package with PyPi.</p>
+</section>
+<section id="example-problems">
+<h2>Example Problems<a class="headerlink" href="#example-problems" title="Link to this heading">¶</a></h2>
+<p>Two example problems are provided in the repository Example_Single_Image.py and Example_Multiple_Images.py, located in the Examples directory.</p>
 </section>
 </section>
 
@@ -76,6 +96,7 @@ When in the new directory, type:</p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-problems">Example Problems</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="edgefinder.html">Functions</a></li>
