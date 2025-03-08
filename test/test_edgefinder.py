@@ -12,7 +12,7 @@ def test_ef_crop():
     exp = exp[0:700,0:700]
     obs = image_crop[0:700,0:700]
     
-    assert (exp == obs).all()
+    assert 1 == 0
 
 def test_ef_subpixel():
     image_test = Image.open(r"Test_image.png")
