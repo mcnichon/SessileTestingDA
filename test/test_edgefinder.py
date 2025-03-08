@@ -7,8 +7,10 @@ def test_ef_crop():
 
     image_crop = ef.ef_crop(image_test)
 
-    obs = [image_crop.shape[0], image_crop.shape[1]]
-    exp = [703, 1612]
+    exp = np.genfromtxt('Crop.csv', delimiter=',')
+    exp = exp[0:700,0:700]
+    obs = image_crop[0:700,0:700]
+    
     assert exp == obs
 
 def test_ef_subpixel():
