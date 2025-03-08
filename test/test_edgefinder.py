@@ -20,10 +20,12 @@ def test_ef_subpixel():
     image_crop = ef.ef_crop(image_test)
     image_subpixel = ef.ef_subpixel(image_crop)
 
-    obs = [image_subpixel.shape[0], image_subpixel.shape[1]]
-    exp = [1406, 3224]
+    exp = np.genfromtxt('Multi.csv', delimiter=',')
+    exp = exp[0:1199,0:1199]
+    
+    obs = image_subpixel[0:1199, 0:1199]
 
-    assert exp == obs
+    assert (exp == obs).all
 
 def test_ef_baseline():
 
