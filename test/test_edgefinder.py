@@ -1,6 +1,7 @@
 import edgefinder.edgefinder as ef
 from PIL import Image, ImageOps
 from pytest import approx
+import numpy as np
 
 def test_ef_crop():
     image_test = Image.open(r"Test_image.png")
