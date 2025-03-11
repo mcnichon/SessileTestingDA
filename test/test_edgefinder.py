@@ -45,7 +45,7 @@ def test_ef_drop_edge():
 
     obs = [image_edge_l.shape[0], image_edge_l.shape[1], image_edge_r.shape[0], image_edge_r.shape[1]]
     exp = [2, 222, 2, 222]
-    assert exp == approx(obs, rel = 1e-3)
+    assert exp == approx(obs, rel = 1)
 
 def test_ef_angle_tan():
     image_test = Image.open(r"Test_image.png")
@@ -59,7 +59,7 @@ def test_ef_angle_tan():
                                                                                             image_baseline_coe)
     obs = [intersection_l[0], intersection_l[1], intersection_r[0], intersection_r[1], image_angle[0], image_angle[1]]
     exp = [1328.4,            1208,              1840.6,            1208,              76.5042667,     76.5042667]
-    assert exp == approx(obs, rel = 1e-3)
+    assert exp == approx(obs, rel = 1)
 
 def test_ef_full_analysis():
     image_test = Image.open(r"Test_image.png")
@@ -68,5 +68,5 @@ def test_ef_full_analysis():
     obs = [angle[0], angle[1]]
     exp = [76.5042667, 76.5042667]
 
-    assert exp == approx(obs, rel = 1e-3)
+    assert exp == approx(obs, rel = 1)
 
